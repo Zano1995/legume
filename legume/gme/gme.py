@@ -53,23 +53,11 @@ class GuidedModeExp(object):
         # Initialize all the attributes defined as properties below
         self._symm = []
         self._freqs = []
-        self._freqs_odd = []
-        self._freqs_even = []
         self._freqs_im = []
-        self._freqs_im_odd = []
-        self._freqs_im_even = []
         self._unbalance_im = []
-        self._unbalance_im_odd = []
-        self._unbalance_im_even = []
         self._eigvecs = []
-        self._eigvecs_odd = []
-        self._eigvecs_even = []
         self._rad_coup = {}
         self._rad_gvec = {}
-        self._rad_coup_odd = {}
-        self._rad_gvec_odd = {}
-        self._rad_coup_even = {}
-        self._rad_gvec_even = {}
         self._kpoints = []
         self._gvec = []
 
@@ -108,12 +96,12 @@ class GuidedModeExp(object):
         return rep
 
     @property
-    def symm(self):
+    def symms(self):
         """Symmetry of the eigenmodes computed by the 
         guided-mode expansion  w.r.t. the vertical plane.
         Calculated if symmetry = 'both'.
         """
-        return self._symm
+        return self._symms
 
     @property
     def freqs(self):
@@ -123,45 +111,11 @@ class GuidedModeExp(object):
         return self._freqs
 
     @property
-    def freqs_odd(self):
-        """Real part of the frequencies of the eigenmodes which are
-        odd the symmetry is w.r.t. the vertical plane of symmetry
-        computed by the 
-        guided-mode expansion.
-        """
-        return self._freqs_odd
-
-    @property
-    def freqs_even(self):
-        """Real part of the frequencies of the eigenmodes which are
-        even the symmetry is w.r.t. the vertical plane of symmetry
-        computed by the  
-        guided-mode expansion.
-        """
-        return self._freqs_even
-
-    @property
     def freqs_im(self):
         """Imaginary part of the frequencies of the eigenmodes computed by the 
         guided-mode expansion.
         """
         return self._freqs_im
-
-    @property
-    def freqs_im_odd(self):
-        """Imaginary part of the frequencies of the eigenmodes that are
-        odd w.r.t. the vertical plane of symmetry
-        computed by the guided-mode expansion.
-        """
-        return self._freqs_im_odd
-
-    @property
-    def freqs_im_even(self):
-        """Imaginary part of the frequencies of eigenmodes that are
-        even w.r.t. the vertical plane of symmetry
-        computed by the guided-mode expansion.
-        """
-        return self._freqs_im_even
 
     @property
     def unbalance_im(self):
@@ -178,56 +132,10 @@ class GuidedModeExp(object):
         return self._unbalance_im
 
     @property
-    def unbalance_im_odd(self):
-        """Unbalance between the two addends in the summation
-            of the imaginary part of the energy for modes that are
-            odd w.r.t. the vertical plane of symmetry. The two addends
-            corresponds to s (te) coupling component, and 
-            p (tm) component. 
-            If unbalance_im ==
-            1 -> all coupling comes from s (te) wave
-            0 -> all coupling comes from p (tm) wave
-            0.5 -> half coupling from s and p waves
-            If freqs_im=0 we set unbalance_im = 0.5.
-        """
-        return self._unbalance_im_odd
-
-    @property
-    def unbalance_im_even(self):
-        """Unbalance between the two addends in the summation
-            of the imaginary part of the energy modes that are
-            even w.r.t. the vertical plane of symmetry. The two addends
-            corresponds to s (te) coupling component, and 
-            p (tm) component. 
-            If unbalance_im ==
-            1 -> all coupling comes from s (te) wave
-            0 -> all coupling comes from p (tm) wave
-            0.5 -> half coupling from s and p waves
-            If freqs_im=0 we set unbalance_im = 0.5.
-        """
-        return self._unbalance_im_even
-
-    @property
     def eigvecs(self):
         """Eigenvectors of the eigenmodes computed by the guided-mode expansion.
         """
         return self._eigvecs
-
-    @property
-    def eigvecs_odd(self):
-        """Eigenvectors of the eigenmodes that are
-        odd w.r.t. the vertical plane of symmetry
-        computed by the guided-mode expansion.
-        """
-        return self._eigvecs_odd
-
-    @property
-    def eigvecs_even(self):
-        """Eigenvectors of the eigenmodes that are
-        even w.r.t. the vertical plane of symmetry
-        computed by the guided-mode expansion.
-        """
-        return self._eigvecs_even
 
     @property
     def rad_coup(self):
@@ -243,58 +151,12 @@ class GuidedModeExp(object):
         return self._rad_coup
 
     @property
-    def rad_coup_odd(self):
-        """Coupling to TE and TM radiative modes in the claddings calculated
-        for modes that are odd w.r.t. the vertical plane of symmetry.
-        The dictionary has four keys: ``'l_te'``, ``'l_tm'``, ``'u_te'``, 
-        ``'u_tm'``, denoting cladding (l/u) and polarization (te/tm, or S/P). 
-        Each of these is a list of lists in which the first dimension 
-        corresponds to the k-point index and the second dimension corresponds 
-        to the mode index. Finally, the elements are numpy arrays with length 
-        equal to all the allowed diffraction orders. The corresponding 
-        reciprocal lattice vectors are stored in :attr:`GuidedModeExp.rad_gvec`.
-        """
-        return self._rad_coup_odd
-
-    @property
-    def rad_coup_even(self):
-        """Coupling to TE and TM radiative modes in the claddings calculated 
-        for modes that are even w.r.t. the vertical plane of symmetry.
-        The dictionary has four keys: ``'l_te'``, ``'l_tm'``, ``'u_te'``, 
-        ``'u_tm'``, denoting cladding (l/u) and polarization (te/tm, or S/P). 
-        Each of these is a list of lists in which the first dimension 
-        corresponds to the k-point index and the second dimension corresponds 
-        to the mode index. Finally, the elements are numpy arrays with length 
-        equal to all the allowed diffraction orders. The corresponding 
-        reciprocal lattice vectors are stored in :attr:`GuidedModeExp.rad_gvec`.
-        """
-        return self._rad_coup_even
-
-    @property
     def rad_gvec(self):
         """Reciprocal lattice vectors corresponding to the radiation emission 
         direction of the coupling constants stored in 
         :attr:`GuidedModeExp.rad_coup`.
         """
         return self._rad_gvec
-
-    @property
-    def rad_gvec_odd(self):
-        """Reciprocal lattice vectors corresponding to the radiation emission 
-        direction of the coupling constants for modes that are odd w.r.t. 
-        the vertical plane of symmetry stored in 
-        :attr:`GuidedModeExp.rad_coup`.
-        """
-        return self._rad_gvec_odd
-
-    @property
-    def rad_gvec_even(self):
-        """Reciprocal lattice vectors corresponding to the radiation emission 
-        direction of the coupling constants for modes that are even w.r.t.
-        the vertical plane of symmetry stored in 
-        :attr:`GuidedModeExp.rad_coup`.
-        """
-        return self._rad_gvec_even
 
     @property
     def kpoints(self):
@@ -945,21 +807,11 @@ class GuidedModeExp(object):
         #Check if angles are provided in case is not None
         if self.symmetry is None:
             pass
-        elif self.symmetry.lower() == 'odd':
+        elif self.symmetry.lower() in {'odd','even','both'}:
             if bd.shape(angles)[0] == 0:
                 raise ValueError(
                     "path['angles'] must be passed to GuidedModeExp.run()"
-                    " if symmetry = 'odd'")
-        elif self.symmetry.lower() == 'even':
-            if bd.shape(angles)[0] == 0:
-                raise ValueError(
-                    "path['angles'] must be passed to GuidedModeExp.run()"
-                    " if 'symmetry' = 'even'")
-        elif self.symmetry.lower() == 'both':
-            if bd.shape(angles)[0] == 0:
-                raise ValueError(
-                    "path['angles'] must be passed to GuidedModeExp.run()"
-                    " if 'symmetry' = 'both'")
+                    " if symmetry is either 'odd', 'even' or 'both.")
         else:
             raise ValueError(
                 "'symmetry' can be None, 'odd', 'even' or 'both' ")
@@ -1104,15 +956,9 @@ class GuidedModeExp(object):
         t_rad = 0
 
         freqs = []
-        freqs_odd = []
-        freqs_even = []
         freqs_im = []
-        freqs_odd = []
-        freqs_even = []
-        self._symm = []
+        symms = []
         self._eigvecs = []
-        self._eigvecs_odd = []
-        self._eigvecs_even = []
         self.even_counts = []
         self.odd_counts = []
         for ik, k in enumerate(kpoints.T):
@@ -1214,20 +1060,20 @@ class GuidedModeExp(object):
                     freq1 = bd.sqrt(
                         bd.abs(freq2 - bd.ones(mat_odd.shape[0]))) / 2 / np.pi
 
-                    i_near_odd = find_nearest(get_value(freq1), self.eig_sigma,
+                    i_near = find_nearest(get_value(freq1), self.eig_sigma,
                                               self.numeig)
-                    i_sort_odd = bd.argsort(freq1[i_near_odd])
+                    i_sort = bd.argsort(freq1[i_near])
 
-                    freq_odd = freq1[i_near_odd[i_sort_odd]]
-                    evec_odd = evecs[:, i_near_odd[i_sort_odd]]
+                    freq = freq1[i_near[i_sort]]
+                    evec = evecs[:, i_near[i_sort]]
                     #Rewrite eigenvector in original basis
                     zeros_arr = bd.zeros(
-                        (self.even_counts[ik], np.shape(evec_odd)[1]))
-                    evec_odd = bd.concatenate((zeros_arr, evec_odd))
+                        (self.even_counts[ik], np.shape(evec)[1]))
+                    evec = bd.concatenate((zeros_arr, evec))
                     if self.use_sparse == True:
-                        evec_odd = v_sigma_perm.dot(evec_odd)
+                        evec = v_sigma_perm.dot(evec)
                     elif self.use_sparse == False:
-                        evec_odd = bd.matmul(v_sigma_perm, evec_odd)
+                        evec = bd.matmul(v_sigma_perm, evec)
                 elif self.symmetry.lower() == 'even':
                     if self.numeig > mat_even.shape[0]:
                         raise ValueError(
@@ -1239,20 +1085,20 @@ class GuidedModeExp(object):
                     freq1 = bd.sqrt(
                         bd.abs(freq2 - bd.ones(mat_even.shape[0]))) / 2 / np.pi
 
-                    i_near_even = find_nearest(get_value(freq1),
+                    i_near = find_nearest(get_value(freq1),
                                                self.eig_sigma, self.numeig)
-                    i_sort_even = bd.argsort(freq1[i_near_even])
+                    i_sort = bd.argsort(freq1[i_near])
 
-                    freq_even = freq1[i_near_even[i_sort_even]]
-                    evec_even = evecs[:, i_near_even[i_sort_even]]
+                    freq = freq1[i_near[i_sort]]
+                    evec = evecs[:, i_near[i_sort]]
                     #Rewrite eigenvector in original basis
                     zeros_arr = bd.zeros(
-                        (self.odd_counts[ik], np.shape(evec_even)[1]))
-                    evec_even = bd.concatenate((evec_even, zeros_arr))
+                        (self.odd_counts[ik], np.shape(evec)[1]))
+                    evec = bd.concatenate((evec, zeros_arr))
                     if self.use_sparse == True:
-                        evec_even = v_sigma_perm.dot(evec_even)
+                        evec = v_sigma_perm.dot(evec)
                     elif self.use_sparse == False:
-                        evec_even = bd.matmul(v_sigma_perm, evec_even)
+                        evec = bd.matmul(v_sigma_perm, evec)
             elif self.eig_solver == 'eigsh':
                 if self.symmetry:
                     raise ValueError(
@@ -1271,25 +1117,20 @@ class GuidedModeExp(object):
                 raise ValueError("'eig_solver' can be 'eigh' or 'eigsh'")
             self.t_eig += time.time() - t_eig
 
-            if self.symmetry is None:
-                freqs.append(freq)
-                self._eigvecs.append(evec)
-            elif self.symmetry.lower() == 'both':
-                freqs.append(freq)
-                self._eigvecs.append(evec)
-                self._symm.append(symm)
-            elif self.symmetry.lower() == 'odd':
-                freqs_odd.append(freq_odd)
-                self._eigvecs_odd.append(evec_odd)
-            elif self.symmetry.lower() == 'even':
-                freqs_even.append(freq_even)
-                self._eigvecs_even.append(evec_even)
+            freqs.append(freq)
+            self._eigvecs.append(evec)
+            if self.symmetry:
+                if self.symmetry.lower() == 'both':
+                    symms.append(symm)
+                elif self.symmetry.lower() == 'odd':
+                    symms = -np.ones_like(np.array(freqs))
+                elif self.symmetry.lower() == 'even':
+                    symms = np.ones_like(np.array(freqs))
 
         # Store the eigenfrequencies taking the standard reduced frequency
         # convention for the units (2pi a/c)
         self._freqs = bd.array(freqs)
-        self._freqs_odd = bd.array(freqs_odd, dtype="object")
-        self._freqs_even = bd.array(freqs_even, dtype="object")
+        self._symms = bd.array(symms)
         # Guided modes are calculated inside _construct_mat()
         self.t_creat_mat = self.t_creat_mat - self.t_guided
         total_time = time.time() - t_start
@@ -1321,7 +1162,7 @@ class GuidedModeExp(object):
 
         if self.compute_im == True:
             t = time.time()
-            self.run_im(self.symmetry)
+            self.run_im()
             self._print(
                 f"{(time.time()-t):.3f}s for imaginary part computation")
         else:
@@ -1330,114 +1171,50 @@ class GuidedModeExp(object):
                 " run it, or compute_rad() to compute the radiative rates"
                 " of selected eigenmodes")
 
-    def run_im(self, symm=None):
+    def run_im(self):
         """
         Compute the radiative rates associated to all the eigenmodes that were 
         computed during :meth:`GuidedModeExp.run`. Results are stored in 
         :attr:`GuidedModeExp.freqs_im`, :attr:`GuidedModeExp.rad_coup`, and 
         :attr:`GuidedModeExp.rad_gvec`.
-        symm: str optional
-            Symmetry of modes for which it calculates imaginary part of 
-            frequencies, it can be 'odd', 'even' or 'both'.
         """
 
         freqs_i = []  # Imaginary part of frequencies
-        freqs_i_odd = []
-        freqs_i_even = []
         freqs_i_te = []  # Imaginary part of frequencies
-        freqs_i_odd_te = []
-        freqs_i_even_te = []
         freqs_i_tm = []  # Imaginary part of frequencies
-        freqs_i_odd_tm = []
-        freqs_i_even_tm = []
 
         # Coupling constants to lower- and upper-cladding radiative modes
         rad_coup = {'l_te': [], 'l_tm': [], 'u_te': [], 'u_tm': []}
         rad_gvec = {'l': [], 'u': []}
 
-        rad_coup_odd = {'l_te': [], 'l_tm': [], 'u_te': [], 'u_tm': []}
-        rad_gvec_odd = {'l': [], 'u': []}
-
-        rad_coup_even = {'l_te': [], 'l_tm': [], 'u_te': [], 'u_tm': []}
-        rad_gvec_even = {'l': [], 'u': []}
-
         minds = np.arange(0, self.numeig)
-        if symm == None or symm.lower() == 'both':
-            if len(self.freqs) == 0:
-                raise RuntimeError("Run the GME computation first!")
 
-            for kind in range(len(self.freqs)):
-                (freqs_im, freqs_im_te, freqs_im_tm, rc,
-                 rv) = self.compute_rad(kind, minds)
-                freqs_i.append(freqs_im)
-                freqs_i_te.append(
-                    freqs_im_te
-                )  # We won't save these, but just the unbalance between te and tm
-                freqs_i_tm.append(freqs_im_tm)
-                for clad in ['l', 'u']:
-                    rad_coup[clad + '_te'].append(rc[clad + '_te'])
-                    rad_coup[clad + '_tm'].append(rc[clad + '_tm'])
-                    rad_gvec[clad].append(rv[clad])
+        if len(self.freqs) == 0:
+            raise RuntimeError("Run the GME computation first!")
 
-            #calculate unbalance between s and p coupling
-            unbalance_i = np.array(freqs_i_te) / (np.array(freqs_i_te) +
-                                                  np.array(freqs_i_tm) + 1e-15)
-            # unbalance 0.5 where there are no losses
-            unbalance_i[np.abs(np.array(freqs_i)) < 1e-15] = 0.5
+        for kind in range(len(self.freqs)):
+            (freqs_im, freqs_im_te, freqs_im_tm, rc,
+             rv) = self.compute_rad(kind, minds)
+            freqs_i.append(freqs_im)
+            freqs_i_te.append(
+                freqs_im_te
+            )  # We won't save these, but just the unbalance between te and tm
+            freqs_i_tm.append(freqs_im_tm)
+            for clad in ['l', 'u']:
+                rad_coup[clad + '_te'].append(rc[clad + '_te'])
+                rad_coup[clad + '_tm'].append(rc[clad + '_tm'])
+                rad_gvec[clad].append(rv[clad])
 
-            self._unbalance_im = bd.array(unbalance_i)
-            self._freqs_im = bd.array(freqs_i)
-            self._rad_coup = rad_coup
-            self._rad_gvec = rad_gvec
+        #calculate unbalance between s and p coupling
+        unbalance_i = np.array(freqs_i_te) / (np.array(freqs_i_te) +
+                                              np.array(freqs_i_tm) + 1e-15)
+        # unbalance 0.5 where there are no losses
+        unbalance_i[np.abs(np.array(freqs_i)) < 1e-15] = 0.5
 
-        elif symm.lower() == 'odd':
-            if len(self.freqs_odd) == 0:
-                raise RuntimeError("Run the GME computation first!")
-
-            for kind in range(len(self.freqs_odd)):
-                (freqs_im_odd, freqs_im_odd_te, freqs_im_odd_tm, rc_odd,
-                 rv_odd) = self.compute_rad(kind, minds, symm_im='odd')
-                freqs_i_odd.append(freqs_im_odd)
-                freqs_i_odd_te.append(freqs_im_odd_te)
-                freqs_i_odd_tm.append(freqs_im_odd_tm)
-                for clad in ['l', 'u']:
-                    rad_coup_odd[clad + '_te'].append(rc_odd[clad + '_te'])
-                    rad_coup_odd[clad + '_tm'].append(rc_odd[clad + '_tm'])
-                    rad_gvec_odd[clad].append(rv_odd[clad])
-
-            #calculate unbalance between s and p coupling
-            unbalance_i_odd = np.array(freqs_i_odd_tm) / (
-                np.array(freqs_i_odd_te) + np.array(freqs_i_odd_tm) + 1e-15)
-            # unbalance 0.5 where there are no losses
-            unbalance_i_odd[np.abs(np.array(freqs_i_odd)) < 1e-15] = 0.5
-            self._unbalance_im_odd = bd.array(unbalance_i_odd)
-            self._freqs_im_odd = bd.array(freqs_i_odd)
-            self._rad_coup_odd = rad_coup_odd
-            self._rad_gvec_odd = rad_gvec_odd
-
-        elif symm.lower() == 'even':
-            if len(self.freqs_even) == 0:
-                raise RuntimeError("Run the GME computation first!")
-            for kind in range(len(self.freqs_even)):
-                (freqs_im_even, freqs_im_even_te, freqs_im_even_tm, rc_even,
-                 rv_even) = self.compute_rad(kind, minds, symm_im='even')
-                freqs_i_even.append(freqs_im_even)
-                freqs_i_even_te.append(freqs_im_even_te)
-                freqs_i_even_tm.append(freqs_im_even_tm)
-                for clad in ['l', 'u']:
-                    rad_coup_even[clad + '_te'].append(rc_even[clad + '_te'])
-                    rad_coup_even[clad + '_tm'].append(rc_even[clad + '_tm'])
-                    rad_gvec_even[clad].append(rv_even[clad])
-
-            #calculate unbalance between s and p coupling
-            unbalance_i_even = np.array(freqs_i_even_te) / (
-                np.array(freqs_i_even_te) + np.array(freqs_i_even_tm) + 1e-15)
-            # unbalance 0.5 where there are no losses
-            unbalance_i_even[np.abs(np.array(freqs_i_even)) < 1e-15] = 0.5
-            self._unbalance_im_even = bd.array(unbalance_i_even)
-            self._freqs_im_even = bd.array(freqs_i_even)
-            self._rad_coup_even = rad_coup_even
-            self._rad_gvec_even = rad_gvec_even
+        self._unbalance_im = bd.array(unbalance_i)
+        self._freqs_im = bd.array(freqs_i)
+        self._rad_coup = rad_coup
+        self._rad_gvec = rad_gvec
 
     def _separate_hamiltonian_dense(self, mat, symm_mat, ik):
         """
@@ -1737,8 +1514,7 @@ class GuidedModeExp(object):
 
     def compute_rad(self,
                     kind: int,
-                    minds: list = [0],
-                    symm_im: Optional[str] = None):
+                    minds: list = [0]):
         """
         Compute the radiation losses of the eigenmodes after the dispersion
         has been computed.
@@ -1750,10 +1526,7 @@ class GuidedModeExp(object):
         minds : list, optional
             Indexes of which modes to be computed. Max value must be smaller 
             than `GuidedModeExp.numeig` set in :meth:`GuidedModeExp.run`.
-        symm_im : str 
-                Symmetry wrt to the veritcal plane of symmetry for 
-                 which we perform the calculation
-        
+
         Returns
         -------
         freqs_im : np.ndarray
@@ -1771,15 +1544,9 @@ class GuidedModeExp(object):
             If freqs_im=0 we set unbalance_im = 0.5.
         """
 
-        if symm_im is None or symm_im.lower() == 'both':
-            freqs = self.freqs
-            eigvecs = self.eigvecs
-        elif symm_im.lower() == 'odd':
-            freqs = self.freqs_odd
-            eigvecs = self.eigvecs_odd
-        elif symm_im.lower() == 'even':
-            freqs = self.freqs_even
-            eigvecs = self.eigvecs_even
+
+        freqs = self.freqs
+        eigvecs = self.eigvecs
 
         if len(freqs) == 0:
             raise RuntimeError("Run the GME computation first!")
@@ -2033,15 +1800,8 @@ class GuidedModeExp(object):
             The Fourier transform of the z-component of the specified field. 
 
         """
-        if self.symmetry is None or self.symmetry.lower() == 'both':
-            evec = self.eigvecs[kind][:, mind]
-            omega = self.freqs[kind][mind] * 2 * np.pi
-        elif self.symmetry.lower() == 'odd':
-            evec = self.eigvecs_odd[kind][:, mind]
-            omega = self.freqs_odd[kind][mind] * 2 * np.pi
-        elif self.symmetry.lower() == 'even':
-            evec = self.eigvecs_even[kind][:, mind]
-            omega = self.freqs_even[kind][mind] * 2 * np.pi
+        evec = self.eigvecs[kind][:, mind]
+        omega = self.freqs[kind][mind] * 2 * np.pi
 
         k = self.kpoints[:, kind]
 
