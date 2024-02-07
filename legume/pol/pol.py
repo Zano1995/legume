@@ -194,8 +194,8 @@ class HopfieldPol(object):
         diag_phot = np.zeros((self.N_max, self.N_max), dtype="complex")
 
         np.fill_diagonal(
-                diag_phot, self.gme.freqs[kind, :] * conv_fact +
-                1j * self.gme.freqs_im[kind, :] * conv_fact)
+            diag_phot, self.gme.freqs[kind, :] * conv_fact +
+            1j * self.gme.freqs_im[kind, :] * conv_fact)
 
         for ind_ex, exc_sch in enumerate(self.exc_list):
             C, D = self._calculate_C_D(exc=exc_sch, kind=kind)

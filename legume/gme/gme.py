@@ -807,7 +807,7 @@ class GuidedModeExp(object):
         #Check if angles are provided in case is not None
         if self.symmetry is None:
             pass
-        elif self.symmetry.lower() in {'odd','even','both'}:
+        elif self.symmetry.lower() in {'odd', 'even', 'both'}:
             if bd.shape(angles)[0] == 0:
                 raise ValueError(
                     "path['angles'] must be passed to GuidedModeExp.run()"
@@ -1061,7 +1061,7 @@ class GuidedModeExp(object):
                         bd.abs(freq2 - bd.ones(mat_odd.shape[0]))) / 2 / np.pi
 
                     i_near = find_nearest(get_value(freq1), self.eig_sigma,
-                                              self.numeig)
+                                          self.numeig)
                     i_sort = bd.argsort(freq1[i_near])
 
                     freq = freq1[i_near[i_sort]]
@@ -1085,8 +1085,8 @@ class GuidedModeExp(object):
                     freq1 = bd.sqrt(
                         bd.abs(freq2 - bd.ones(mat_even.shape[0]))) / 2 / np.pi
 
-                    i_near = find_nearest(get_value(freq1),
-                                               self.eig_sigma, self.numeig)
+                    i_near = find_nearest(get_value(freq1), self.eig_sigma,
+                                          self.numeig)
                     i_sort = bd.argsort(freq1[i_near])
 
                     freq = freq1[i_near[i_sort]]
@@ -1512,9 +1512,7 @@ class GuidedModeExp(object):
 
         return mat_even, mat_odd, v_sigma_perm
 
-    def compute_rad(self,
-                    kind: int,
-                    minds: list = [0]):
+    def compute_rad(self, kind: int, minds: list = [0]):
         """
         Compute the radiation losses of the eigenmodes after the dispersion
         has been computed.
@@ -1543,7 +1541,6 @@ class GuidedModeExp(object):
             0.5 -> half coupling from s and p waves
             If freqs_im=0 we set unbalance_im = 0.5.
         """
-
 
         freqs = self.freqs
         eigvecs = self.eigvecs

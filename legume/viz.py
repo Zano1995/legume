@@ -61,7 +61,8 @@ def bands(gme,
     show_symmetry : bool, optional
         Plot odd and even modes w.r.t. the vertical plane of symmetry
         with different colours if gme.symmetry == 'both',
-        note that this symmetry is not implemented for PlaneWaveExp
+        odd modes are blue, even modes are red.
+        Note that this symmetry is not implemented for PlaneWaveExp
         class
     eV : bool, optional
         Plot the energy bands in [eV].
@@ -93,7 +94,7 @@ def bands(gme,
             # Conversion from dimensionless units to eV
             conv = cs.h * cs.c / cs.e / a
     else:
-        conv = 1 
+        conv = 1
 
     if np.all(gme.kpoints[0,:]==0) and not np.all(gme.kpoints[1,:]==0) \
         or np.all(gme.kpoints[1,:]==0) and not np.all(gme.kpoints[0,:]==0):
@@ -105,12 +106,11 @@ def bands(gme,
 
     X = np.tile(X0.reshape(len(X0), 1), (1, gme.freqs.shape[1]))
 
-
     if ax is None:
         fig, ax = plt.subplots(1, 1, constrained_layout=True, figsize=figsize)
 
     if Q:
-        if (vert_symm == None) or (vert_symm.lower() in {"odd","even"}):
+        if (vert_symm == None) or (vert_symm.lower() in {"odd", "even"}):
             if len(gme.freqs_im) == 0:
                 gme.run_im()
             freqs_im = np.array(gme.freqs_im).flatten() + 1e-16
@@ -118,17 +118,17 @@ def bands(gme,
             Q_max = np.max(Q[Q < Q_clip])
 
             p = ax.scatter(X.flatten(),
-                               conv * gme.freqs.flatten(),
-                               c=Q,
-                               cmap=Q_cmap,
-                               s=markersize**2,
-                               norm=mpl.colors.LogNorm(vmax=Q_max),
-                               edgecolors=markeredgecolor,
-                               linewidth=markeredgewidth)
+                           conv * gme.freqs.flatten(),
+                           c=Q,
+                           cmap=Q_cmap,
+                           s=markersize**2,
+                           norm=mpl.colors.LogNorm(vmax=Q_max),
+                           edgecolors=markeredgecolor,
+                           linewidth=markeredgewidth)
             plt.colorbar(p,
-                             ax=ax,
-                             label="Radiative quality factor",
-                             extend="max")
+                         ax=ax,
+                         label="Radiative quality factor",
+                         extend="max")
             ax.set_ylim(bottom=0.0, top=conv * gme.freqs[:].max())
 
         elif vert_symm.lower() == "both":
@@ -142,17 +142,17 @@ def bands(gme,
                     (np.asarray(gme.symms).flatten() + 1) / 2)
 
                 p = ax.scatter(X.flatten(),
-                                   conv * gme.freqs.flatten(),
-                                   c=Q,
-                                   cmap=Q_cmap,
-                                   s=markersize**2,
-                                   norm=mpl.colors.LogNorm(vmax=Q_max),
-                                   edgecolors=edgecolors,
-                                   linewidth=markeredgewidth)
+                               conv * gme.freqs.flatten(),
+                               c=Q,
+                               cmap=Q_cmap,
+                               s=markersize**2,
+                               norm=mpl.colors.LogNorm(vmax=Q_max),
+                               edgecolors=edgecolors,
+                               linewidth=markeredgewidth)
                 plt.colorbar(p,
-                                 ax=ax,
-                                 label="Radiative quality factor",
-                                 extend="max")
+                             ax=ax,
+                             label="Radiative quality factor",
+                             extend="max")
                 ax.set_ylim(bottom=0.0, top=conv * gme.freqs[:].max())
 
             else:
@@ -163,50 +163,50 @@ def bands(gme,
                 Q_max = np.max(Q[Q < Q_clip])
 
                 p = ax.scatter(X.flatten(),
-                                   conv * gme.freqs.flatten(),
-                                   c=Q,
-                                   cmap=Q_cmap,
-                                   s=markersize**2,
-                                   norm=mpl.colors.LogNorm(vmax=Q_max),
-                                   edgecolors=markeredgecolor,
-                                   linewidth=markeredgewidth)
+                               conv * gme.freqs.flatten(),
+                               c=Q,
+                               cmap=Q_cmap,
+                               s=markersize**2,
+                               norm=mpl.colors.LogNorm(vmax=Q_max),
+                               edgecolors=markeredgecolor,
+                               linewidth=markeredgewidth)
                 plt.colorbar(p,
-                                 ax=ax,
-                                 label="Radiative quality factor",
-                                 extend="max")
+                             ax=ax,
+                             label="Radiative quality factor",
+                             extend="max")
                 ax.set_ylim(bottom=0.0, top=conv * gme.freqs[:].max())
 
     else:
         if vert_symm == None or vert_symm.lower() in {"odd", "even"}:
             ax.plot(X,
                     conv * gme.freqs,
+                    'o',
+                    c="#1f77b4",
+                    label="",
+                    ms=markersize,
+                    mew=markeredgewidth,
+                    mec=markeredgecolor)
+            ax.set_ylim(bottom=0.0, top=conv * gme.freqs[:].max())
+
+        elif vert_symm.lower() == "both":
+            if show_symmetry:
+                ax.scatter(X.flatten(),
+                           conv * gme.freqs.flatten(),
+                           c=gme.symms,
+                           cmap='bwr',
+                           s=markersize**2,
+                           edgecolors=markeredgecolor,
+                           linewidth=markeredgewidth)
+                ax.set_ylim(bottom=0.0, top=conv * gme.freqs[:].max())
+            else:
+                ax.plot(X,
+                        conv * gme.freqs,
                         'o',
                         c="#1f77b4",
                         label="",
                         ms=markersize,
                         mew=markeredgewidth,
                         mec=markeredgecolor)
-            ax.set_ylim(bottom=0.0, top=conv * gme.freqs[:].max())
-
-        elif vert_symm.lower() == "both":
-            if show_symmetry:
-                ax.scatter(X.flatten(),
-                               conv * gme.freqs.flatten(),
-                               c=gme.symms,
-                               cmap='bwr',
-                               s=markersize**2,
-                               edgecolors=markeredgecolor,
-                               linewidth=markeredgewidth)
-                ax.set_ylim(bottom=0.0, top=conv * gme.freqs[:].max())
-            else:
-                ax.plot(X,
-                            conv * gme.freqs,
-                            'o',
-                            c="#1f77b4",
-                            label="",
-                            ms=markersize,
-                            mew=markeredgewidth,
-                            mec=markeredgecolor)
                 ax.set_ylim(bottom=0.0, top=conv * gme.freqs[:].max())
 
     if cone:
@@ -214,15 +214,14 @@ def bands(gme,
             gme.phc.claddings[0].eps_avg, gme.phc.claddings[-1].eps_avg
         ]
         vec_LL = conv * (np.sqrt(
-            np.square(gme.kpoints[0, :]) + np.square(gme.kpoints[1, :])) /
-                         2 / np.pi / np.sqrt(max(eps_clad)))
+            np.square(gme.kpoints[0, :]) + np.square(gme.kpoints[1, :])) / 2 /
+                         np.pi / np.sqrt(max(eps_clad)))
 
         ax.fill_between(X0,
-                            vec_LL,
-                            max(100, vec_LL.max(),
-                                conv * gme.freqs[:].max()),
-                            facecolor=conecolor,
-                            zorder=0)
+                        vec_LL,
+                        max(100, vec_LL.max(), conv * gme.freqs[:].max()),
+                        facecolor=conecolor,
+                        zorder=0)
 
     ax.set_xlim(left=0, right=max(X0))
     ax.set_xlabel('Wave vector')
@@ -1208,7 +1207,6 @@ def field(struct,
     freqs = struct.freqs
     if str_type == 'gme':
         freqs_im = struct.freqs_im
-
 
     field = field.lower()
     val = val.lower()
