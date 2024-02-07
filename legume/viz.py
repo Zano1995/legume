@@ -139,7 +139,7 @@ def bands(gme,
                 Q = gme.freqs.flatten() / 2 / freqs_im
                 Q_max = np.max(Q[Q < Q_clip])
                 edgecolors = mpl.cm.get_cmap('bwr')(
-                    (np.asarray(gme.symm).flatten() + 1) / 2)
+                    (np.asarray(gme.symms).flatten() + 1) / 2)
 
                 p = ax.scatter(X.flatten(),
                                    conv * gme.freqs.flatten(),
@@ -192,7 +192,7 @@ def bands(gme,
             if show_symmetry:
                 ax.scatter(X.flatten(),
                                conv * gme.freqs.flatten(),
-                               c=gme.symm,
+                               c=gme.symms,
                                cmap='bwr',
                                s=markersize**2,
                                edgecolors=markeredgecolor,
