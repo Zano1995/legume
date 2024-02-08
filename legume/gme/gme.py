@@ -96,12 +96,12 @@ class GuidedModeExp(object):
         return rep
 
     @property
-    def symms(self):
+    def kz_symms(self):
         """Symmetry of the eigenmodes computed by the 
-        guided-mode expansion  w.r.t. the vertical plane.
+        guided-mode expansion  w.r.t. the vertical kz plane.
         Calculated if symmetry = 'both'.
         """
-        return self._symms
+        return self._kz_symms
 
     @property
     def freqs(self):
@@ -661,10 +661,11 @@ class GuidedModeExp(object):
                         eig_sigma: float = 0.,
                         eps_eff='average',
                         verbose: bool = True,
-                        symmetry: Optional[str] | None = None,
+                        kz_symmetry: Optional[str] | None = None,
                         symm_thr: float = 1e-8,
                         delta_g: float = 1e-15,
-                        use_sparse: bool = False):
+                        use_sparse: bool = False,
+                        only_gmodes: bool = False):
         """Set multiple options for the guided-mode expansion.
             
             Parameters
@@ -706,9 +707,16 @@ class GuidedModeExp(object):
                 pre-set ``eps_eff``.
             verbose : bool, optional
                 Print information at intermediate steps. Default is True.
-            symmetry : string, optional
-                Symmetry with respect to the vertical plane of incidence,
-                it can be 'both', 'odd', 'even' or None. Default is None
+            kz_symmetry : string, optional
+                Symmetry seleced with respect to the vertical kz plane of incidence,
+                it can be 'both', 'odd', 'even' or None.
+                With None there is no symmetry sepeartion, and kz_symms is an
+                empty list.
+                With 'both' both even and odd modes are saved in freqs and
+                their parity wrt the veritcal plane are saved in kz_symms.
+                With 'even' ('odd') only 'even' modes are calculated and 
+                stored.
+                Default is None
             symm_thr : float, optional
                 Threshold for out-of-diagonal terms in odd/even separated
                 Hamiltonian.
@@ -719,6 +727,10 @@ class GuidedModeExp(object):
             use_sparse: boolean, optional
                 if True, use sparse matrices for separating
                 even and odd modes w.r.t. the vertical plane of symmetry
+            only_gmodes: boolean, optional
+                Should only the guided modes computed withouth the 
+                coupling of the PhC periodic patterning. 
+                Default is True.
             """
 
         # Make a dictionary that stores all the options
@@ -735,10 +747,11 @@ class GuidedModeExp(object):
             'eig_sigma': eig_sigma,
             'eps_eff': eps_eff,
             'verbose': verbose,
-            'symmetry': symmetry,
+            'kz_symmetry': kz_symmetry,
             'symm_thr': symm_thr,
             'delta_g': delta_g,
-            'use_sparse': use_sparse
+            'use_sparse': use_sparse,
+            'only_gmodes': only_gmodes
         }
 
         # Also store the options as separate attributes
@@ -772,9 +785,9 @@ class GuidedModeExp(object):
                 stored in :attr:`GuidedModeExp.eigvecs`.
 
             If compute_im=True (as is default), run :meth:`GuidedModeExp.run_im`.
-            If symmetry = 'odd', 'even' or 'both' calculates symmetries for each k,
+            If kz_symmetry = 'odd', 'even' or 'both' calculates symmetries for each k,
             and imaginary part of frequencies of both polarizations
-            if symmetry = odd' or 'even' calculates imaginary part of 
+            if kz_symmetry = odd' or 'even' calculates imaginary part of 
             'odd' or 'even' modes.
         
         Parameters
@@ -805,22 +818,22 @@ class GuidedModeExp(object):
         self.gmode_include = []
 
         #Check if angles are provided in case is not None
-        if self.symmetry is None:
+        if self.kz_symmetry is None:
             pass
-        elif self.symmetry.lower() in {'odd', 'even', 'both'}:
+        elif self.kz_symmetry.lower() in {'odd', 'even', 'both'}:
             if bd.shape(angles)[0] == 0:
                 raise ValueError(
                     "path['angles'] must be passed to GuidedModeExp.run()"
-                    " if symmetry is either 'odd', 'even' or 'both.")
+                    " if kz_symmetry is either 'odd', 'even' or 'both'.")
         else:
             raise ValueError(
-                "'symmetry' can be None, 'odd', 'even' or 'both' ")
+                "'kz_symmetry' can be None, 'odd', 'even' or 'both' ")
 
         #Check that kpoints are in high symmetry lines of the lattice
         # we round the angle to avoid numerical errors, moreover with self.symmetry different from None
         #'self.trunate_g' must be 'abs'
 
-        if self.symmetry:
+        if self.kz_symmetry:
             if self.truncate_g == 'tbt':
                 raise ValueError(
                     "'truncate_g' must be 'abs' to separate odd and even modes"
@@ -957,7 +970,7 @@ class GuidedModeExp(object):
 
         freqs = []
         freqs_im = []
-        symms = []
+        kz_symms = []
         self._eigvecs = []
         self.even_counts = []
         self.odd_counts = []
@@ -967,8 +980,12 @@ class GuidedModeExp(object):
                         flush=True)
             t_create = time.time()
             mat = self._construct_mat(kind=ik)
-            # The guided modes are calculate inside _construct_mat, later we have to subrtact the time
 
+            # We keep only the diagonal terms if we want to plot ony the guided modes
+            if self.only_gmodes:
+                mat = np.diagflat(np.diag(mat).copy())
+
+            # The guided modes are calculate inside _construct_mat, later we have to subtract the time
             self.t_creat_mat += time.time() - t_create
 
             if self.numeig > mat.shape[0]:
@@ -984,7 +1001,7 @@ class GuidedModeExp(object):
             if self.eig_solver == 'eigh':
 
                 # Separates odd and even blocks of Hamiltonian
-                if self.symmetry:
+                if self.kz_symmetry:
                     t_sym = time.time()
                     symm_mat = refl_mat[str(angles[ik])]
 
@@ -998,7 +1015,7 @@ class GuidedModeExp(object):
                     self.t_symmetry += time.time() - t_sym
 
                 # Diagonalise matrix
-                if self.symmetry is None:
+                if self.kz_symmetry is None:
                     (freq2, evecs) = bd.eigh(mat + bd.eye(mat.shape[0]))
                     freq1 = bd.sqrt(
                         bd.abs(freq2 - bd.ones(mat.shape[0]))) / 2 / np.pi
@@ -1009,7 +1026,7 @@ class GuidedModeExp(object):
                     freq = freq1[i_near[i_sort]]
                     evec = evecs[:, i_near[i_sort]]
 
-                elif self.symmetry.lower() == 'both':
+                elif self.kz_symmetry.lower() == 'both':
                     (freq2_odd,
                      evecs_odd) = bd.eigh(mat_odd + bd.eye(mat_odd.shape[0]))
                     freq1_odd = bd.sqrt(
@@ -1049,7 +1066,7 @@ class GuidedModeExp(object):
                     elif self.use_sparse == False:
                         evec = bd.matmul(v_sigma_perm, evec)
 
-                elif self.symmetry.lower() == 'odd':
+                elif self.kz_symmetry.lower() == 'odd':
                     if self.numeig > mat_odd.shape[0]:
                         raise ValueError(
                             "Requested number of odd eigenvalues 'numeig' "
@@ -1074,7 +1091,7 @@ class GuidedModeExp(object):
                         evec = v_sigma_perm.dot(evec)
                     elif self.use_sparse == False:
                         evec = bd.matmul(v_sigma_perm, evec)
-                elif self.symmetry.lower() == 'even':
+                elif self.kz_symmetry.lower() == 'even':
                     if self.numeig > mat_even.shape[0]:
                         raise ValueError(
                             "Requested number of even eigenvalues 'numeig' "
@@ -1100,7 +1117,7 @@ class GuidedModeExp(object):
                     elif self.use_sparse == False:
                         evec = bd.matmul(v_sigma_perm, evec)
             elif self.eig_solver == 'eigsh':
-                if self.symmetry:
+                if self.kz_symmetry:
                     raise ValueError(
                         "odd/even separation implemented with 'eigh' solver only."
                     )
@@ -1119,18 +1136,19 @@ class GuidedModeExp(object):
 
             freqs.append(freq)
             self._eigvecs.append(evec)
-            if self.symmetry:
-                if self.symmetry.lower() == 'both':
-                    symms.append(symm)
-                elif self.symmetry.lower() == 'odd':
-                    symms = -np.ones_like(np.array(freqs))
-                elif self.symmetry.lower() == 'even':
-                    symms = np.ones_like(np.array(freqs))
+            if self.kz_symmetry:
+                if self.kz_symmetry.lower() == 'both':
+                    kz_symms.append(symm)
+        if self.kz_symmetry:
+            if self.kz_symmetry.lower() == 'odd':
+                kz_symms = -np.ones_like(np.array(freqs))
+            elif self.kz_symmetry.lower() == 'even':
+                kz_symms = np.ones_like(np.array(freqs))
 
         # Store the eigenfrequencies taking the standard reduced frequency
         # convention for the units (2pi a/c)
         self._freqs = bd.array(freqs)
-        self._symms = bd.array(symms)
+        self._kz_symms = bd.array(kz_symms)
         # Guided modes are calculated inside _construct_mat()
         self.t_creat_mat = self.t_creat_mat - self.t_guided
         total_time = time.time() - t_start
@@ -1151,7 +1169,7 @@ class GuidedModeExp(object):
             f"  {self.t_creat_mat:.3f}s ({self.t_creat_mat/total_time*100:.0f}%) for creating GME matrix"
         )
 
-        if self.symmetry:
+        if self.kz_symmetry:
             if self.use_sparse == True:
                 str_mat_used = "sparse"
             elif self.use_sparse == False:

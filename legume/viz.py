@@ -80,7 +80,7 @@ def bands(gme,
 
     # Vertical symmetry is not implemented for PlaneWaveExp class
     if isinstance(gme, GuidedModeExp):
-        vert_symm = gme.symmetry
+        vert_symm = gme.kz_symmetry
     elif isinstance(gme, PlaneWaveExp):
         vert_symm = None
 
@@ -139,7 +139,7 @@ def bands(gme,
                 Q = gme.freqs.flatten() / 2 / freqs_im
                 Q_max = np.max(Q[Q < Q_clip])
                 edgecolors = mpl.cm.get_cmap('bwr')(
-                    (np.asarray(gme.symms).flatten() + 1) / 2)
+                    (np.asarray(gme.kz_symms).flatten() + 1) / 2)
 
                 p = ax.scatter(X.flatten(),
                                conv * gme.freqs.flatten(),
@@ -192,7 +192,7 @@ def bands(gme,
             if show_symmetry:
                 ax.scatter(X.flatten(),
                            conv * gme.freqs.flatten(),
-                           c=gme.symms,
+                           c=gme.kz_symms,
                            cmap='bwr',
                            s=markersize**2,
                            edgecolors=markeredgecolor,
@@ -1195,7 +1195,7 @@ def field(struct,
         Figure object for the plot.
     """
     if isinstance(struct, GuidedModeExp):
-        vert_symm = struct.symmetry
+        vert_symm = struct.kz_symmetry
         str_type = 'gme'
     elif isinstance(struct, PlaneWaveExp):
         vert_symm = None
