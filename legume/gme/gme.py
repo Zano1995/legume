@@ -633,8 +633,8 @@ class GuidedModeExp(object):
 
             if self.truncate_g == 'tbt':
                 if self.only_gmodes:
-                    raise ValueError("only_gmodes can be true only with 'abs' truncation."
-                        )
+                    raise ValueError(
+                        "only_gmodes can be true only with 'abs' truncation.")
                 for it, T1 in enumerate(self.T1):
                     self.hom_layer = []
                     # For now we just use the numpy inversion. Later on we could
@@ -652,7 +652,8 @@ class GuidedModeExp(object):
                 for eps_mat in self.eps_ft:
                     # We keep only the diagonal terms of eps^-1 if we want to plot ony the guided modes
                     if self.only_gmodes:
-                        self.eps_inv_mat.append(bd.inv(np.diagflat(np.diag(eps_mat).copy())))
+                        self.eps_inv_mat.append(
+                            bd.inv(np.diagflat(np.diag(eps_mat).copy())))
                     else:
                         self.eps_inv_mat.append(bd.inv(eps_mat))
 
@@ -973,7 +974,9 @@ class GuidedModeExp(object):
 
         # We keep only the diagonal terms of eps^-1 if we want to plot ony the guided modes
         if self.only_gmodes:
-            self.eps_inv_mat = [np.diagflat(np.diag(a).copy()) for a in self.eps_inv_mat]
+            self.eps_inv_mat = [
+                np.diagflat(np.diag(a).copy()) for a in self.eps_inv_mat
+            ]
         t_eps_inv = time.time() - t
 
         # Loop over all k-points, construct the matrix, diagonalize, and compute
@@ -992,9 +995,6 @@ class GuidedModeExp(object):
                         flush=True)
             t_create = time.time()
             mat = self._construct_mat(kind=ik)
-
-            
-                
 
             # The guided modes are calculate inside _construct_mat, later we have to subtract the time
             self.t_creat_mat += time.time() - t_create
