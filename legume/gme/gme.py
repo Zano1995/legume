@@ -632,6 +632,9 @@ class GuidedModeExp(object):
             self.eps_inv_mat = []
 
             if self.truncate_g == 'tbt':
+                if self.only_gmodes:
+                    raise ValueError("only_gmodes can be true only with 'abs' truncation."
+                        )
                 for it, T1 in enumerate(self.T1):
                     self.hom_layer = []
                     # For now we just use the numpy inversion. Later on we could
@@ -645,8 +648,13 @@ class GuidedModeExp(object):
                         self.eps_inv_mat.append(bd.inv(eps_mat))
                         self.hom_layer.append(False)
             elif self.truncate_g == 'abs':
+
                 for eps_mat in self.eps_ft:
-                    self.eps_inv_mat.append(bd.inv(eps_mat))
+                    # We keep only the diagonal terms of eps^-1 if we want to plot ony the guided modes
+                    if self.only_gmodes:
+                        self.eps_inv_mat.append(bd.inv(np.diagflat(np.diag(eps_mat).copy())))
+                    else:
+                        self.eps_inv_mat.append(bd.inv(eps_mat))
 
     def set_run_options(self,
                         gmode_compute='exact',
@@ -962,7 +970,7 @@ class GuidedModeExp(object):
         # Compute inverse matrix of FT of permittivity
         t = time.time()
         self.compute_eps_inv()
-        
+
         # We keep only the diagonal terms of eps^-1 if we want to plot ony the guided modes
         if self.only_gmodes:
             self.eps_inv_mat = [np.diagflat(np.diag(a).copy()) for a in self.eps_inv_mat]
