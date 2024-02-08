@@ -962,6 +962,10 @@ class GuidedModeExp(object):
         # Compute inverse matrix of FT of permittivity
         t = time.time()
         self.compute_eps_inv()
+        
+        # We keep only the diagonal terms of eps^-1 if we want to plot ony the guided modes
+        if self.only_gmodes:
+            self.eps_inv_mat = [np.diagflat(np.diag(a).copy()) for a in self.eps_inv_mat]
         t_eps_inv = time.time() - t
 
         # Loop over all k-points, construct the matrix, diagonalize, and compute
@@ -981,9 +985,8 @@ class GuidedModeExp(object):
             t_create = time.time()
             mat = self._construct_mat(kind=ik)
 
-            # We keep only the diagonal terms if we want to plot ony the guided modes
-            if self.only_gmodes:
-                mat = np.diagflat(np.diag(mat).copy())
+            
+                
 
             # The guided modes are calculate inside _construct_mat, later we have to subtract the time
             self.t_creat_mat += time.time() - t_create
