@@ -10,7 +10,7 @@ class ExcitonSchroedEq(object):
     """
 
     def __init__(self,
-                 layer,
+                 phc,
                  z,
                  Vmax,
                  a,
@@ -25,27 +25,47 @@ class ExcitonSchroedEq(object):
         Parameters
         ----------
 
-        layer : Layer
-            Layer defining the 2D structure.
+        phc : PhotCryst
+            Photonic crystal object to be simulated.
         gmax : float, optional
             Maximum reciprocal lattice wave-vector length in units of 2pi/a.
-        a : lattice constant [m]
-        M : exciton mass [kg]
-        Vmax: potential of the shapes in the layer [eV]
-        E0 : free exciton energy [eV]
-        z : position of the QW in z direction,
-        loss : losses assumed to be contant [eV]
-        osc_str : list or numpy array with 3 components
-            oscillator strength [m^-2]
+        a : float
+            lattice constant [m]
+        M : float
+            exciton mass [kg]
+        Vmax: float
+            potential of the shapes in the layer [eV]
+        E0 : float
+            free exciton energy [eV]
+        z : float
+            position of the excitonic layer in z direction.
+            This cannot be in the claddings
+        loss : float
+            losses assumed to be contant [eV]
+        osc_str : list or numpy array,optional
+            oscillator strength in units [m^-2],
+            it must have  3 components (x,y,z)
         truncate_g : {'tbt', 'abs'}
             Truncation of the reciprocal lattice vectors, ``'tbt'`` takes a 
             parallelogram in reciprocal space, while ``'abs'`` takes a circle.
         """
 
+        self.phc = phc
+        # Number of layers in the PhC
+        self.N_layers = len(phc.layers)
+        layer_index = self._z_to_lind(z)
+        if layer_index == 0 or layer_index == self.N_layers+1:
+            raise ValueError(f"ExcitonSchroedEq cannot be intilized in a cladding"
+                            f" layer at z={z:.3f}, change the position 'z'.")
+        else:
+            # Note that layer_index=1 corresponds to the first layer phc.layers[0] 
+            self.layer = phc.layers[layer_index-1]
+
         self.E0 = E0
         self.M = M
         self.a = a
-        self.layer = layer
+
+
         self.gmax = gmax
         self.loss = loss
         self.z = z
@@ -53,7 +73,10 @@ class ExcitonSchroedEq(object):
         self.osc_str = osc_str
         self.truncate_g = truncate_g
 
-        if osc_str:
+        
+        
+
+        if osc_str is not None:
             if type(self.osc_str) == list:
                 self.osc_str = np.asarray(self.osc_str)
             elif type(self.osc_str) == np.ndarray:
@@ -120,6 +143,7 @@ class ExcitonSchroedEq(object):
 
         z_max = self.phc.claddings[0].z_max
         lind = 0  # Index denoting which layer (including claddings) z is in
+        
         while z > z_max and lind < self.N_layers:
             lind += 1
             z_max = self.phc.layers[lind - 1].z_max

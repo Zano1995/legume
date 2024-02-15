@@ -31,7 +31,7 @@ class HopfieldPol(object):
         for qw in phc.qws:  #loop over quantum wells added with add_qw
             layer_ind = self.gme._z_to_lind(qw.z)
             self.exc_list.append(
-                ExcitonSchroedEq(layer=phc.layers[layer_ind - 1],
+                ExcitonSchroedEq(phc=phc,
                                  z=qw.z,
                                  Vmax=qw.Vmax,
                                  a=qw.a,
