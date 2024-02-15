@@ -12,7 +12,7 @@ class ExcitonSchroedEq(object):
     def __init__(self,
                  phc,
                  z,
-                 Vmax,
+                 V_shapes,
                  a,
                  M,
                  E0,
@@ -33,7 +33,7 @@ class ExcitonSchroedEq(object):
             lattice constant [m]
         M : float
             exciton mass [kg]
-        Vmax: float
+        V_shapes: float
             potential of the shapes in the layer [eV]
         E0 : float
             free exciton energy [eV]
@@ -69,7 +69,7 @@ class ExcitonSchroedEq(object):
         self.gmax = gmax
         self.loss = loss
         self.z = z
-        self.Vmax = Vmax
+        self.V_shapes = V_shapes
         self.osc_str = osc_str
         self.truncate_g = truncate_g
 
@@ -220,8 +220,8 @@ class ExcitonSchroedEq(object):
                             self.gvec[:, range(n2max)]
 
         # Compute and store T1 and T2
-        self.T1 = self.layer.compute_exc_ft(G1, self.Vmax)
-        self.T2 = self.layer.compute_exc_ft(G2, self.Vmax)
+        self.T1 = self.layer.compute_exc_ft(G1, self.V_shapes)
+        self.T2 = self.layer.compute_exc_ft(G2, self.V_shapes)
 
         # Store the g-vectors to which T1 and T2 correspond
         self.G1 = G1
@@ -238,8 +238,8 @@ class ExcitonSchroedEq(object):
         self.T1 = []
         self.T2 = []
 
-        T1 = self.layer.compute_exc_ft(self.gvec, self.Vmax)
-        T2 = self.layer.compute_exc_ft(self.gvec, self.Vmax)
+        T1 = self.layer.compute_exc_ft(self.gvec, self.V_shapes)
+        T2 = self.layer.compute_exc_ft(self.gvec, self.V_shapes)
 
         # Store T1 and T2
         if bd.amax(bd.abs(bd.imag(T1))) < 1e-10 * bd.amax(bd.abs(bd.real(T1))):
@@ -260,7 +260,7 @@ class ExcitonSchroedEq(object):
                   self.gvec[1, :][:, np.newaxis]).ravel()
 
         pot_ft = self.layer.compute_exc_ft(np.vstack((ggridx, ggridy)),
-                                           self.Vmax)
+                                           self.V_shapes)
         self.pot_ft = bd.reshape(pot_ft,
                                  (self.gvec[0, :].size, self.gvec[0, :].size))
 

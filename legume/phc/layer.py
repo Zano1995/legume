@@ -250,10 +250,10 @@ class QuantumWellLayer():
     """Quantum well layers,
      """
 
-    def __init__(self, z, Vmax, a, M, E0, loss, osc_str):
+    def __init__(self, z, V_shapes, a, M, E0, loss, osc_str):
 
         self.z = z
-        self.Vmax = Vmax
+        self.V_shapes = V_shapes
         self.a = a
         self.M = M
         self.E0 = E0
@@ -261,7 +261,7 @@ class QuantumWellLayer():
         self.osc_str = bd.array(osc_str)
 
     def __repr__(self):
-        rep = f'QuantumWellLayer(z = {self.z}, Vmax = {self.Vmax} eV, a = {self.a*10**9} nm, \n \
+        rep = f'QuantumWellLayer(z = {self.z}, V_shapes = {self.V_shapes} eV, a = {self.a*10**9} nm, \n \
          M = {self.M*10**31}*10^-31 kg, E0 = {self.E0} eV, loss = {self.loss*10**6} uV )'
 
         return rep

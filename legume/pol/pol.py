@@ -33,7 +33,7 @@ class HopfieldPol(object):
             self.exc_list.append(
                 ExcitonSchroedEq(phc=phc,
                                  z=qw.z,
-                                 Vmax=qw.Vmax,
+                                 V_shapes=qw.V_shapes,
                                  a=qw.a,
                                  M=qw.M,
                                  E0=qw.E0,
@@ -123,7 +123,6 @@ class HopfieldPol(object):
         """
         Calculate the photonic and excitonic fraction of the bands starting from
         the polaritonic eigenvectors.
-
 
          """
 

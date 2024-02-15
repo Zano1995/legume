@@ -86,7 +86,7 @@ class PhotCryst(object):
         self.claddings[1].z_min = z_min + d
         self.layers.append(layer)
 
-    def add_qw(self, z: float, Vmax: float, a: float, M: float, E0: float,
+    def add_qw(self, z: float, V_shapes: float, a: float, M: float, E0: float,
                loss: float, osc_str):
         """
         Add a quantum wells block in the phc structure.
@@ -95,7 +95,7 @@ class PhotCryst(object):
         ----------
         z: float
             Positions of the QWs.
-        Vmax : float
+        V_shapes : float
             Potential felt by excitons in Shapes in [eV].
             The background is assumed to be at 0 eV.
 
@@ -116,7 +116,7 @@ class PhotCryst(object):
         if z <= self.claddings[0].z_max or z >= self.claddings[1].z_min:
             raise ValueError(
                 f"QuantumWellLayer cannot be in the claddings at z = {z}.")
-        qw = QuantumWellLayer(z, Vmax, a, M, E0, loss, osc_str)
+        qw = QuantumWellLayer(z, V_shapes, a, M, E0, loss, osc_str)
         self.qws.append(qw)
 
     def add_shape(self, shapes, layer=-1, cladding=None):
