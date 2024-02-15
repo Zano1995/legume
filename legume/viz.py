@@ -742,7 +742,7 @@ def structure(struct,
         qws = []
     elif isinstance(struct, PhotCryst):
         phc = struct
-        qws = []
+        qws = struct.qws
     elif isinstance(struct, HopfieldPol):
         phc = struct.gme.phc
         qws = struct.exc_list
