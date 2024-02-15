@@ -8,6 +8,7 @@ import sys, time
 class ExcitonSchroedEq(object):
     """Main simulation class of the excitonic Schroedinger equation.
     """
+
     def __init__(self,
                  layer,
                  z,
@@ -16,7 +17,7 @@ class ExcitonSchroedEq(object):
                  M,
                  E0,
                  loss,
-                 osc_str,
+                 osc_str= None,
                  gmax: float = 3.,
                  truncate_g='abs'):
         """Initialize the Schroedinger equation expansion.
@@ -52,14 +53,15 @@ class ExcitonSchroedEq(object):
         self.osc_str = osc_str
         self.truncate_g = truncate_g
 
-        if type(self.osc_str) == list:
-            self.osc_str = np.asarray(self.osc_str)
-        elif type(self.osc_str) == np.ndarray:
-            pass
-        else:
-            raise TypeError("'osc_str' must be a list or a numpy array.")
-        if np.shape(self.osc_str)[0] != 3:
-            raise ValueError("'osc_str' must have 3 componets.")
+        if osc_str:
+            if type(self.osc_str) == list:
+                self.osc_str = np.asarray(self.osc_str)
+            elif type(self.osc_str) == np.ndarray:
+                pass
+            else:
+                raise TypeError("'osc_str' must be a list or a numpy array.")
+            if np.shape(self.osc_str)[0] != 3:
+                raise ValueError("'osc_str' must have 3 componets.")
 
         if self.truncate_g == 'tbt':
             self._init_reciprocal_tbt()
@@ -383,6 +385,7 @@ class ExcitonSchroedEq(object):
     def ft_wavef_xy(self, kind, mind):
         """
         Compute the wavefunction Fourier components in the xy-plane
+
         kind : int
             The wavefunction of the mode at `ExcitonSchroedEq.kpoints[:, kind]` is 
             computed.
@@ -395,10 +398,9 @@ class ExcitonSchroedEq(object):
         ft = evec
         return ft
 
-    def get_wavef_xy(self, kind, mind, z=0, Nx=100, Ny=100):
+    def get_wavef_xy(self, kind, mind, Nx=100, Ny=100):
         """
-        Compute the wavefunction in the xy-plane at 
-        position z.
+        Compute the wavefunction in the xy-plane.
         
         Parameters
         ----------
@@ -407,9 +409,6 @@ class ExcitonSchroedEq(object):
             computed.
         mind : int
             The wavefunction of the `mind` mode at that kpoint is computed.
-        z : float
-            Position of the xy-plane. This doesn't matter for the PWE or EqSchroe, but is 
-            added for consistency with the GME definitions.
         Nx : int, optional
             A grid of Nx points in the elementary cell is created.
         Ny : int, optional

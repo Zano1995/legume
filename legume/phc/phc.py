@@ -9,6 +9,7 @@ class PhotCryst(object):
     """
     Class for a photonic crystal which can contain a number of layers.
     """
+
     def __init__(self, lattice, eps_l: float = 1, eps_u: float = 1):
         """Initialize a photonic crystal.
         
@@ -92,13 +93,13 @@ class PhotCryst(object):
 
         Parameters
         ----------
-        z: float.
+        z: float
             Positions of the QWs.
-        Vmax : float,
+        Vmax : float
             Potential felt by excitons in Shapes in [eV].
             The background is assumed to be at 0 eV.
 
-        a : float,
+        a : float
             dimensional lattice constant in [m].
         M : float
             Exciton mass in [kg]
@@ -106,9 +107,9 @@ class PhotCryst(object):
             Free exciton energy in [eV]
         loss : float
             Exciton non-radiative losses in [eV]
-        osc_str: list or np.ndarray, 
+        osc_str: list or np.ndarray
             exciton oscillator strength per unit area in [m^-2],
-            it has three component in th [x,y,z] frame of reference.
+            it has three component in the [x,y,z] frame of reference.
             
         """
 
