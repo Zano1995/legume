@@ -94,6 +94,22 @@ class ExcitonSchroedEq(object):
             self._compute_pot_ft_abs()
         else:
             raise ValueError("'truncate_g' must be 'tbt' or 'abs'.")
+    
+    def __repr__(self):
+        rep = 'ExcitonSchroedEq(\n'
+        rep += 'gmax = ' + repr(self.gmax) + ', \n'
+        rep += 'a = ' + repr(self.a) + ' m, \n'
+        rep += 'M = ' + f'{self.M:.3e}' + ' kg, \n'
+        rep += 'E0 = ' + repr(self.E0) + ' eV, \n'
+        rep += 'loss = ' + repr(self.loss*1e3) + ' ueV, \n'
+        rep += 'z = ' + f'{self.z:.6f}' + ', \n'
+        rep += 'V_shapes = ' + repr(self.V_shapes) + ' eV, \n'
+        if self.osc_str is not None:
+            rep += 'osc_str = ' + repr(self.osc_str) + ' m^-2, \n'
+
+
+        rep += ')'
+        return rep
 
     @property
     def eners(self):
