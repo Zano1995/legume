@@ -840,7 +840,6 @@ class GuidedModeExp(object):
             raise ValueError(
                 "'kz_symmetry' can be None, 'odd', 'even' or 'both' ")
 
-
         if self.kz_symmetry:
             if self.truncate_g == 'tbt':
                 raise ValueError(
@@ -848,7 +847,7 @@ class GuidedModeExp(object):
                     " w.r.t. a vertical plane of symmetry.")
 
             refl_mat = self._calculate_refl_mat(angles)
-            
+
         # Array of effective permittivity of every layer (including claddings)
         if self.eps_eff == 'average':
             layer_eps = 'eps_avg'
@@ -1493,7 +1492,7 @@ class GuidedModeExp(object):
 
         return mat_even, mat_odd, v_sigma_perm
 
-    def _calculate_refl_mat(self,angles):
+    def _calculate_refl_mat(self, angles):
         """
         Calculate the reflection matrices used for 
         the symmetry separation with respect to
