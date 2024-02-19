@@ -23,7 +23,7 @@ try:
     import autograd.scipy as spa
     #from autograd.scipy import spa_sparse
     from .primitives import (toeplitz_block_ag, eigh_ag, interp_ag, fsolve_ag,
-                             eigsh_ag, inv_ag, sqrt_ag, extend_ag)
+                             eigsh_ag, inv_ag, sqrt_ag, extend_ag, eig_ag)
     AG_AVAILABLE = True
 except ImportError:
     AG_AVAILABLE = False
@@ -164,6 +164,7 @@ if AG_AVAILABLE:
         inv = staticmethod(inv_ag)
         eigh = staticmethod(eigh_ag)
         eigsh = staticmethod(eigsh_ag)
+        eig = staticmethod(eig_ag)
         outer = staticmethod(npa.outer)
         conj = staticmethod(npa.conj)
         var = staticmethod(npa.var)
