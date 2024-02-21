@@ -23,7 +23,7 @@ try:
     import autograd.scipy as spa
     #from autograd.scipy import spa_sparse
     from .primitives import (toeplitz_block_ag, eigh_ag, interp_ag, fsolve_ag,
-                             eigsh_ag, inv_ag, sqrt_ag, extend_ag, eig_ag)
+                             eigsh_ag, inv_ag, sqrt_ag, extend_ag, eig_ag, spdot_ag)
     AG_AVAILABLE = True
 except ImportError:
     AG_AVAILABLE = False
@@ -98,6 +98,9 @@ class NumpyBackend(Backend):
     matmul = staticmethod(np.matmul)
     tan = staticmethod(np.tan)
 
+    # Dot product between a scipy sparse matrix and a numpy array.
+    spdot = staticmethod(lambda spmat, mat: spmat.dot(mat))
+
     # Sparse matrix class
     #coo = staticmethod(sparse.coo_array)
 
@@ -171,6 +174,10 @@ if AG_AVAILABLE:
         power = staticmethod(npa.power)
         matmul = staticmethod(npa.matmul)
         tan = staticmethod(npa.tan)
+
+        # Dot product between a scipy sparse matrix and a numpy array.
+        # Differentiable w.r.t. the numpy array.
+        spdot = staticmethod(spdot_ag)
 
         # constructors
         diag = staticmethod(npa.diag)

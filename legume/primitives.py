@@ -365,3 +365,17 @@ def vjp_maker_eig(ans, x):
     return vjp
 
 defvjp(eig_ag, vjp_maker_eig)
+
+
+"""=========== SCIPY.SPARSE.DOT =========== """
+# Dot product between a scipy sparse matrix and a numpy array.
+# Differentiable w.r.t. the numpy array."
+
+spdot_ag = primitive(lambda spmat, mat: spmat.dot(mat))
+def vjp_maker_spdot(ans, spmat, mat):
+    """vjp for the gradient w.r.t. mat"""
+    def vjp(g):
+        return spmat.dot(g)
+    return vjp
+
+defvjp(spdot_ag, None, vjp_maker_spdot)
